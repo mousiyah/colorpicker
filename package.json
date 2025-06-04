@@ -2,7 +2,7 @@
   "name": "colorpicker",
   "private": true,
   "version": "0.1.0",
-  "homepage": "https://muslima.github.io/colorpicker",
+  "homepage": "https://mousiyah.github.io/colorpicker",
   "type": "module",
   "scripts": {
     "predeploy": "npm run build",
