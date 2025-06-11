@@ -345,13 +345,15 @@ function App() {
   };
 
   const handleColorChange = (newColor: string) => {
-    setIsShadeSelection(false);
     setColor(newColor);
+    setHexInput(newColor);
+    setIsShadeSelection(false);
   };
 
   const handleShadeClick = (shade: string, index: number) => {
-    setIsShadeSelection(true);
     setColor(shade);
+    setHexInput(shade);
+    setIsShadeSelection(true);
     setSelectedShadeIndex(index);
     handleCopyColor();
 
@@ -379,7 +381,9 @@ function App() {
       );
       const newRgb = { ...rgb, [component]: value };
       setRgb(newRgb);
-      setColor(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
+      const newColor = rgbToHex(newRgb.r, newRgb.g, newRgb.b);
+      setColor(newColor);
+      setHexInput(newColor);
     };
 
   const handleHslChange =
@@ -393,7 +397,9 @@ function App() {
       const newHsl = { ...hsl, [component]: value };
       setHsl(newHsl);
       const rgb = hslToRgb(newHsl.h, newHsl.s, newHsl.l);
-      setColor(rgbToHex(rgb.r, rgb.g, rgb.b));
+      const newColor = rgbToHex(rgb.r, rgb.g, rgb.b);
+      setColor(newColor);
+      setHexInput(newColor);
     };
 
   function hslToRgb(h: number, s: number, l: number): RgbaColor {
@@ -424,7 +430,9 @@ function App() {
       const r = Math.round(255 * (1 - newCmyk.c / 100) * (1 - newCmyk.k / 100));
       const g = Math.round(255 * (1 - newCmyk.m / 100) * (1 - newCmyk.k / 100));
       const b = Math.round(255 * (1 - newCmyk.y / 100) * (1 - newCmyk.k / 100));
-      setColor(rgbToHex(r, g, b));
+      const newColor = rgbToHex(r, g, b);
+      setColor(newColor);
+      setHexInput(newColor);
     };
 
   const handleHsbChange =
@@ -481,9 +489,13 @@ function App() {
           b = q;
           break;
       }
-      setColor(
-        rgbToHex(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255))
+      const newColor = rgbToHex(
+        Math.round(r * 255),
+        Math.round(g * 255),
+        Math.round(b * 255)
       );
+      setColor(newColor);
+      setHexInput(newColor);
     };
 
   const handleAddToFavorites = () => {
