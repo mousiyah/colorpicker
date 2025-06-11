@@ -280,6 +280,7 @@ function App() {
     null
   );
   const [isShadeSelection, setIsShadeSelection] = useState(false);
+  const [hexInput, setHexInput] = useState("#3f51b5");
   const shadeSelectorRef = useRef<HTMLDivElement>(null);
   const [cmyk, setCmyk] = useState<CmykColor>({ c: 0, m: 0, y: 0, k: 0 });
   const [hsb, setHsb] = useState<HsbColor>({ h: 0, s: 0, b: 0 });
@@ -510,6 +511,24 @@ function App() {
     fav.name.toLowerCase().includes(favoriteSearch.toLowerCase())
   );
 
+  const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newHex = e.target.value;
+    setHexInput(newHex);
+
+    // Only update color if it's a valid hex
+    if (/^#[0-9A-Fa-f]{6}$/.test(newHex)) {
+      setColor(newHex);
+      setIsShadeSelection(false);
+    }
+  };
+
+  const handleHexBlur = () => {
+    // If hex is invalid on blur, reset to current color
+    if (!/^#[0-9A-Fa-f]{6}$/.test(hexInput)) {
+      setHexInput(color);
+    }
+  };
+
   return (
     <Container
       maxWidth="xl"
@@ -677,13 +696,9 @@ function App() {
                 <TextField
                   fullWidth
                   label="HEX Color"
-                  value={color}
-                  onChange={(e) => {
-                    const newColor = e.target.value;
-                    if (/^#[0-9A-Fa-f]{6}$/.test(newColor)) {
-                      setColor(newColor);
-                    }
-                  }}
+                  value={hexInput}
+                  onChange={handleHexChange}
+                  onBlur={handleHexBlur}
                   variant="outlined"
                   sx={{ "& .MuiInputLabel-root": { whiteSpace: "nowrap" } }}
                 />
