@@ -237,6 +237,45 @@ function rgbToCmyk(r: number, g: number, b: number): CmykColor {
   };
 }
 
+function rgbToHsl(
+  r: number,
+  g: number,
+  b: number
+): { h: number; s: number; l: number } {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  };
+}
+
 function rgbToHsb(r: number, g: number, b: number): HsbColor {
   r /= 255;
   g /= 255;
@@ -317,6 +356,7 @@ function App() {
       setRgb(newRgb);
       setCmyk(rgbToCmyk(newRgb.r, newRgb.g, newRgb.b));
       setHsb(rgbToHsb(newRgb.r, newRgb.g, newRgb.b));
+      setHsl(rgbToHsl(newRgb.r, newRgb.g, newRgb.b));
     }
     // Only generate new shades if the color change didn't come from shade selection
     if (!isShadeSelection) {
@@ -381,6 +421,9 @@ function App() {
       );
       const newRgb = { ...rgb, [component]: value };
       setRgb(newRgb);
+      setCmyk(rgbToCmyk(newRgb.r, newRgb.g, newRgb.b));
+      setHsb(rgbToHsb(newRgb.r, newRgb.g, newRgb.b));
+      setHsl(rgbToHsl(newRgb.r, newRgb.g, newRgb.b));
       const newColor = rgbToHex(newRgb.r, newRgb.g, newRgb.b);
       setColor(newColor);
       setHexInput(newColor);
@@ -430,6 +473,10 @@ function App() {
       const r = Math.round(255 * (1 - newCmyk.c / 100) * (1 - newCmyk.k / 100));
       const g = Math.round(255 * (1 - newCmyk.m / 100) * (1 - newCmyk.k / 100));
       const b = Math.round(255 * (1 - newCmyk.y / 100) * (1 - newCmyk.k / 100));
+      const newRgb = { r, g, b };
+      setRgb(newRgb);
+      setHsb(rgbToHsb(r, g, b));
+      setHsl(rgbToHsl(r, g, b));
       const newColor = rgbToHex(r, g, b);
       setColor(newColor);
       setHexInput(newColor);
@@ -489,11 +536,15 @@ function App() {
           b = q;
           break;
       }
-      const newColor = rgbToHex(
-        Math.round(r * 255),
-        Math.round(g * 255),
-        Math.round(b * 255)
-      );
+      const newRgb = {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255),
+      };
+      setRgb(newRgb);
+      setCmyk(rgbToCmyk(newRgb.r, newRgb.g, newRgb.b));
+      setHsl(rgbToHsl(newRgb.r, newRgb.g, newRgb.b));
+      const newColor = rgbToHex(newRgb.r, newRgb.g, newRgb.b);
       setColor(newColor);
       setHexInput(newColor);
     };
