@@ -335,7 +335,11 @@ function App() {
   const shadeSelectorRef = useRef<HTMLDivElement>(null);
   const [cmyk, setCmyk] = useState<CmykColor>({ c: 0, m: 0, y: 0, k: 0 });
   const [hsb, setHsb] = useState<HsbColor>({ h: 0, s: 0, b: 0 });
-  const [favorites, setFavorites] = useState<FavoriteColor[]>([]);
+  const [favorites, setFavorites] = useState<FavoriteColor[]>(() => {
+    // Load favorites from localStorage on component mount
+    const savedFavorites = localStorage.getItem("colorPickerFavorites");
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
+  });
   const [favoriteSearch, setFavoriteSearch] = useState("");
   const [editingFavoriteIndex, setEditingFavoriteIndex] = useState<
     number | null
@@ -613,18 +617,31 @@ function App() {
   const handleAddToFavorites = () => {
     const isAlreadyFavorite = favorites.some((fav) => fav.color === color);
     if (!isAlreadyFavorite) {
-      setFavorites([{ color, name: "" }, ...favorites]); // Add to beginning of array
+      const newFavorites = [{ color, name: "" }, ...favorites]; // Add to beginning of array
+      setFavorites(newFavorites);
+      localStorage.setItem(
+        "colorPickerFavorites",
+        JSON.stringify(newFavorites)
+      );
     }
   };
 
   const handleRemoveFromFavorites = (index: number) => {
-    setFavorites(favorites.filter((_, i) => i !== index));
+    const newFavorites = favorites.filter((_, i) => i !== index);
+    setFavorites(newFavorites);
+    localStorage.setItem("colorPickerFavorites", JSON.stringify(newFavorites));
   };
 
   const handleFavoriteNameChange = (index: number, newName: string) => {
     const newFavorites = [...favorites];
     newFavorites[index].name = newName;
     setFavorites(newFavorites);
+    localStorage.setItem("colorPickerFavorites", JSON.stringify(newFavorites));
+  };
+
+  const handleClearAllFavorites = () => {
+    setFavorites([]);
+    localStorage.removeItem("colorPickerFavorites");
   };
 
   const handleFavoriteClick = (color: string) => {
@@ -688,15 +705,37 @@ function App() {
                   alignItems: "center",
                 }}
               >
-                <Typography
-                  variant="h6"
+                <Box
                   sx={{
-                    fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
-                    mb: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "clamp(8px, 1.5vw, 16px)",
                   }}
                 >
-                  Favorites
-                </Typography>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+                      mb: 0,
+                    }}
+                  >
+                    Favorites
+                  </Typography>
+                  {favorites.length > 0 && (
+                    <IconButton
+                      size="small"
+                      onClick={handleClearAllFavorites}
+                      color="error"
+                      sx={{
+                        minWidth: "clamp(24px, 4vw, 32px)",
+                        height: "clamp(24px, 4vw, 32px)",
+                      }}
+                      title="Clear all favorites"
+                    >
+                      <FavoriteIcon fontSize="small" />
+                    </IconButton>
+                  )}
+                </Box>
                 <TextField
                   size="small"
                   placeholder="Search..."
@@ -767,14 +806,36 @@ function App() {
                         {favorite.name || "Click to add name"}
                       </Typography>
                     )}
-                    <IconButton
-                      size="small"
-                      onClick={() => handleRemoveFromFavorites(index)}
-                      color="error"
-                      sx={{ mt: 0.5 }}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: "clamp(2px, 0.5vw, 4px)",
+                        mt: "clamp(2px, 0.5vh, 4px)",
+                      }}
                     >
-                      <FavoriteIcon fontSize="small" />
-                    </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => setEditingFavoriteIndex(index)}
+                        color="primary"
+                        sx={{
+                          minWidth: "clamp(24px, 4vw, 32px)",
+                          height: "clamp(24px, 4vw, 32px)",
+                        }}
+                      >
+                        <SearchIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRemoveFromFavorites(index)}
+                        color="error"
+                        sx={{
+                          minWidth: "clamp(24px, 4vw, 32px)",
+                          height: "clamp(24px, 4vw, 32px)",
+                        }}
+                      >
+                        <FavoriteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
                   </FavoriteItem>
                 ))}
               </FavoritesContainer>
