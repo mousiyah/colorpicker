@@ -249,7 +249,7 @@ function rgbToHsl(
   const min = Math.min(r, g, b);
   let h = 0;
   let s = 0;
-  const l = (max + min) / 2;
+  let l = (max + min) / 2;
 
   if (max !== min) {
     const d = max - min;
@@ -257,7 +257,7 @@ function rgbToHsl(
 
     switch (max) {
       case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
+        h = ((g - b) / d + (g < b ? 6 : 0)) % 6;
         break;
       case g:
         h = (b - r) / d + 2;
@@ -268,6 +268,11 @@ function rgbToHsl(
     }
     h /= 6;
   }
+
+  // Ensure values are within valid ranges
+  h = Math.max(0, Math.min(1, h));
+  s = Math.max(0, Math.min(1, s));
+  l = Math.max(0, Math.min(1, l));
 
   return {
     h: Math.round(h * 360),
@@ -283,14 +288,14 @@ function rgbToHsb(r: number, g: number, b: number): HsbColor {
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const d = max - min;
-  const s = max === 0 ? 0 : d / max;
-  const v = max;
+  let s = max === 0 ? 0 : d / max;
+  let v = max;
   let h = 0;
 
   if (max !== min) {
     switch (max) {
       case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
+        h = ((g - b) / d + (g < b ? 6 : 0)) % 6;
         break;
       case g:
         h = (b - r) / d + 2;
@@ -301,6 +306,11 @@ function rgbToHsb(r: number, g: number, b: number): HsbColor {
     }
     h /= 6;
   }
+
+  // Ensure values are within valid ranges
+  h = Math.max(0, Math.min(1, h));
+  s = Math.max(0, Math.min(1, s));
+  v = Math.max(0, Math.min(1, v));
 
   return {
     h: Math.round(h * 360),
@@ -448,14 +458,35 @@ function App() {
   function hslToRgb(h: number, s: number, l: number): RgbaColor {
     s /= 100;
     l /= 100;
-    const k = (n: number) => (n + h / 30) % 12;
-    const a = s * Math.min(l, 1 - l);
-    const f = (n: number) =>
-      l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+
+    if (s === 0) {
+      // Achromatic (gray)
+      const gray = Math.round(l * 255);
+      return { r: gray, g: gray, b: gray };
+    }
+
+    const hue2rgb = (p: number, q: number, t: number): number => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
     return {
-      r: Math.round(255 * f(0)),
-      g: Math.round(255 * f(8)),
-      b: Math.round(255 * f(4)),
+      r: Math.max(
+        0,
+        Math.min(255, Math.round(255 * hue2rgb(p, q, h / 360 + 1 / 3)))
+      ),
+      g: Math.max(0, Math.min(255, Math.round(255 * hue2rgb(p, q, h / 360)))),
+      b: Math.max(
+        0,
+        Math.min(255, Math.round(255 * hue2rgb(p, q, h / 360 - 1 / 3)))
+      ),
     };
   }
 
@@ -470,9 +501,27 @@ function App() {
       const newCmyk = { ...cmyk, [component]: value };
       setCmyk(newCmyk);
       // Convert CMYK to RGB and update color
-      const r = Math.round(255 * (1 - newCmyk.c / 100) * (1 - newCmyk.k / 100));
-      const g = Math.round(255 * (1 - newCmyk.m / 100) * (1 - newCmyk.k / 100));
-      const b = Math.round(255 * (1 - newCmyk.y / 100) * (1 - newCmyk.k / 100));
+      const r = Math.max(
+        0,
+        Math.min(
+          255,
+          Math.round(255 * (1 - newCmyk.c / 100) * (1 - newCmyk.k / 100))
+        )
+      );
+      const g = Math.max(
+        0,
+        Math.min(
+          255,
+          Math.round(255 * (1 - newCmyk.m / 100) * (1 - newCmyk.k / 100))
+        )
+      );
+      const b = Math.max(
+        0,
+        Math.min(
+          255,
+          Math.round(255 * (1 - newCmyk.y / 100) * (1 - newCmyk.k / 100))
+        )
+      );
       const newRgb = { r, g, b };
       setRgb(newRgb);
       setHsb(rgbToHsb(r, g, b));
@@ -492,54 +541,64 @@ function App() {
       );
       const newHsb = { ...hsb, [component]: value };
       setHsb(newHsb);
-      // Convert HSB to RGB and update color
+      // Convert HSB to RGB and update color using precise algorithm
       const h = newHsb.h / 360;
       const s = newHsb.s / 100;
       const v = newHsb.b / 100;
-      const i = Math.floor(h * 6);
-      const f = h * 6 - i;
-      const p = v * (1 - s);
-      const q = v * (1 - f * s);
-      const t = v * (1 - (1 - f) * s);
+
       let r = 0,
         g = 0,
         b = 0;
-      switch (i % 6) {
-        case 0:
-          r = v;
-          g = t;
-          b = p;
-          break;
-        case 1:
-          r = q;
-          g = v;
-          b = p;
-          break;
-        case 2:
-          r = p;
-          g = v;
-          b = t;
-          break;
-        case 3:
-          r = p;
-          g = q;
-          b = v;
-          break;
-        case 4:
-          r = t;
-          g = p;
-          b = v;
-          break;
-        case 5:
-          r = v;
-          g = p;
-          b = q;
-          break;
+
+      if (s === 0) {
+        // Achromatic (gray)
+        r = g = b = v;
+      } else {
+        const i = Math.floor(h * 6);
+        const f = h * 6 - i;
+        const p = v * (1 - s);
+        const q = v * (1 - f * s);
+        const t = v * (1 - (1 - f) * s);
+
+        switch (i % 6) {
+          case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+          case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+          case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+          case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+          case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+          case 5:
+            r = v;
+            g = p;
+            b = q;
+            break;
+        }
       }
+
+      // Ensure values are within valid ranges and round precisely
       const newRgb = {
-        r: Math.round(r * 255),
-        g: Math.round(g * 255),
-        b: Math.round(b * 255),
+        r: Math.max(0, Math.min(255, Math.round(r * 255))),
+        g: Math.max(0, Math.min(255, Math.round(g * 255))),
+        b: Math.max(0, Math.min(255, Math.round(b * 255))),
       };
       setRgb(newRgb);
       setCmyk(rgbToCmyk(newRgb.r, newRgb.g, newRgb.b));
