@@ -18,15 +18,15 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import SearchIcon from "@mui/icons-material/Search";
 
 const ColorPreview = styled(Box)(({ theme }) => ({
-  width: "90%",
-  height: "70px",
+  width: "100%",
+  height: "clamp(50px, 6vh, 70px)",
   borderRadius: theme.shape.borderRadius,
-  marginBottom: theme.spacing(2),
+  marginBottom: "clamp(8px, 1.5vh, 16px)",
   marginTop: theme.spacing(0),
   transition: "background-color 0.3s ease",
   display: "flex",
-  gap: theme.spacing(2),
-  padding: theme.spacing(2),
+  gap: "clamp(8px, 1.5vw, 16px)",
+  padding: "clamp(8px, 1.5vw, 16px)",
 }));
 
 const TextPreviewBox = styled(Box)(({ theme }) => ({
@@ -36,18 +36,18 @@ const TextPreviewBox = styled(Box)(({ theme }) => ({
   justifyContent: "center",
   borderRadius: theme.shape.borderRadius,
   fontFamily: "Calibri, sans-serif",
-  fontSize: "1.2rem",
+  fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
   fontWeight: "bold",
 }));
 
 const ShadeSelector = styled(Box)(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing(1),
+  gap: "clamp(4px, 1vw, 8px)",
   overflowX: "auto",
-  padding: theme.spacing(2),
-  maxHeight: "120px",
+  padding: "clamp(12px, 2vw, 16px)",
+  paddingBottom: "clamp(24px, 3vh, 32px)",
   "&::-webkit-scrollbar": {
-    height: "8px",
+    height: "clamp(6px, 1vw, 10px)",
   },
   "&::-webkit-scrollbar-track": {
     background: "#f1f1f1",
@@ -61,16 +61,16 @@ const ShadeSelector = styled(Box)(({ theme }) => ({
 
 const ShadeBox = styled(Box)<{ color: string; selected?: boolean }>(
   ({ color, selected, theme }) => ({
-    minWidth: "60px",
-    height: "60px",
+    minWidth: "clamp(50px, 8vw, 70px)",
+    height: "clamp(50px, 8vw, 70px)",
     borderRadius: "4px",
     cursor: "pointer",
     transition: "all 0.2s ease",
     backgroundColor: color,
     position: "relative",
     border: selected
-      ? `4px solid ${theme.palette.primary.main}`
-      : "4px solid transparent",
+      ? `clamp(3px, 0.5vw, 5px) solid ${theme.palette.primary.main}`
+      : `clamp(3px, 0.5vw, 5px) solid transparent`,
     boxShadow: selected ? theme.shadows[4] : "none",
     "&:hover": {
       transform: "scale(1.1)",
@@ -81,17 +81,18 @@ const ShadeBox = styled(Box)<{ color: string; selected?: boolean }>(
 
 const ShadeLabel = styled(Typography)({
   position: "absolute",
-  bottom: "-20px",
+  bottom: "clamp(-10px, -2.5vh, -24px)",
   left: "50%",
   transform: "translateX(-50%)",
-  fontSize: "0.75rem",
+  fontSize: "clamp(0.65rem, 1.5vw, 0.8rem)",
   whiteSpace: "nowrap",
+  textAlign: "center",
 });
 
 const ColorPickerContainer = styled(Box)({
   position: "relative",
   width: "100%",
-  height: "350px",
+  height: "clamp(200px, 30vh, 350px)",
   "& .react-colorful": {
     width: "100%",
     height: "100%",
@@ -100,13 +101,14 @@ const ColorPickerContainer = styled(Box)({
 
 const FavoritesContainer = styled(Box)(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "repeat(3, 1fr)",
-  gap: theme.spacing(1),
-  maxHeight: "calc(100% - 80px)", // Account for title and search bar
+  gridTemplateColumns:
+    "repeat(auto-fit, minmax(clamp(80px, 15vw, 120px), 1fr))",
+  gap: "clamp(4px, 1vw, 8px)",
+  maxHeight: "calc(100% - clamp(60px, 8vh, 80px))", // Account for title and search bar
   overflowY: "auto",
-  padding: theme.spacing(1),
+  padding: "clamp(4px, 1vw, 8px)",
   "&::-webkit-scrollbar": {
-    width: "8px",
+    width: "clamp(6px, 1vw, 10px)",
   },
   "&::-webkit-scrollbar-track": {
     background: "#f1f1f1",
@@ -122,8 +124,8 @@ const FavoriteItem = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: theme.spacing(0.5),
-  padding: theme.spacing(1),
+  gap: "clamp(2px, 0.5vw, 4px)",
+  padding: "clamp(4px, 1vw, 8px)",
   borderRadius: theme.shape.borderRadius,
   cursor: "pointer",
   "&:hover": {
@@ -132,11 +134,11 @@ const FavoriteItem = styled(Box)(({ theme }) => ({
 }));
 
 const FavoriteColor = styled(Box)<{ color: string }>(({ color }) => ({
-  width: "40px",
-  height: "40px",
+  width: "clamp(32px, 6vw, 48px)",
+  height: "clamp(32px, 6vw, 48px)",
   borderRadius: "4px",
   backgroundColor: color,
-  border: "2px solid transparent",
+  border: "clamp(1px, 0.2vw, 3px) solid transparent",
   transition: "all 0.2s ease",
   "&:hover": {
     transform: "scale(1.1)",
@@ -654,9 +656,11 @@ function App() {
   return (
     <Container
       maxWidth="xl"
-      sx={{ height: "100vh", py: 4, overflow: "hidden" }}
+      sx={{ height: "100vh", py: "clamp(16px, 3vh, 32px)", overflow: "hidden" }}
     >
-      <Box sx={{ height: "100%", display: "flex", gap: 4 }}>
+      <Box
+        sx={{ height: "100%", display: "flex", gap: "clamp(16px, 3vw, 32px)" }}
+      >
         <Box sx={{ flex: 1, height: "100%" }}>
           <Box
             sx={{ height: "100%", display: "flex", flexDirection: "column" }}
@@ -675,15 +679,22 @@ function App() {
             >
               <Box
                 sx={{
-                  mb: 1,
-                  mt: 3,
-                  mlL: 2,
+                  mb: "clamp(4px, 1vh, 8px)",
+                  mt: "clamp(16px, 3vh, 24px)",
+                  ml: "clamp(8px, 1.5vw, 16px)",
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Typography variant="h6" gutterBottom>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+                    mb: 0,
+                  }}
+                >
                   Favorites
                 </Typography>
                 <TextField
@@ -695,14 +706,19 @@ function App() {
                     startAdornment: (
                       <SearchIcon
                         sx={{
-                          mr: 1,
+                          mr: "clamp(4px, 1vw, 8px)",
                           color: "text.secondary",
-                          fontSize: "1rem",
+                          fontSize: "clamp(0.8rem, 1.5vw, 1rem)",
                         }}
                       />
                     ),
                   }}
-                  sx={{ maxWidth: "150px" }}
+                  sx={{
+                    maxWidth: "clamp(120px, 20vw, 180px)",
+                    "& .MuiInputBase-input": {
+                      fontSize: "clamp(0.75rem, 1.5vw, 0.875rem)",
+                    },
+                  }}
                 />
               </Box>
               <FavoritesContainer>
@@ -712,7 +728,10 @@ function App() {
                       color={favorite.color}
                       onClick={() => handleFavoriteClick(favorite.color)}
                     />
-                    <Typography variant="caption" sx={{ fontSize: "0.75rem" }}>
+                    <Typography
+                      variant="caption"
+                      sx={{ fontSize: "clamp(0.65rem, 1.5vw, 0.8rem)" }}
+                    >
                       {favorite.color}
                     </Typography>
                     {editingFavoriteIndex === index ? (
@@ -730,12 +749,20 @@ function App() {
                         }}
                         autoFocus
                         placeholder="Enter name..."
-                        sx={{ width: "100%" }}
+                        sx={{
+                          width: "100%",
+                          "& .MuiInputBase-input": {
+                            fontSize: "clamp(0.65rem, 1.5vw, 0.8rem)",
+                          },
+                        }}
                       />
                     ) : (
                       <Typography
                         onClick={() => setEditingFavoriteIndex(index)}
-                        sx={{ cursor: "pointer", fontSize: "0.75rem" }}
+                        sx={{
+                          cursor: "pointer",
+                          fontSize: "clamp(0.65rem, 1.5vw, 0.8rem)",
+                        }}
                       >
                         {favorite.name || "Click to add name"}
                       </Typography>
@@ -755,22 +782,43 @@ function App() {
           </Box>
         </Box>
 
-        <Box sx={{ flex: 1, height: "100%", overflow: "hidden" }}>
+        <Box
+          sx={{
+            flex: 1,
+            height: "100%",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <Box
             sx={{
               height: "100%",
               display: "flex",
               flexDirection: "column",
-              gap: 2,
+              gap: "clamp(8px, 1.5vh, 16px)",
+              overflow: "hidden",
             }}
           >
             <Box>
-              <Typography variant="h6" gutterBottom>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
+                  mb: "clamp(8px, 1.5vh, 16px)",
+                }}
+              >
                 Color Shades
               </Typography>
               <ShadeSelector ref={shadeSelectorRef}>
                 {shades.map((shade, index) => (
-                  <Box key={index} sx={{ position: "relative", pb: 1 }}>
+                  <Box
+                    key={index}
+                    sx={{
+                      position: "relative",
+                      pb: "clamp(20px, 2.5vh, 28px)",
+                    }}
+                  >
                     <ShadeBox
                       color={shade}
                       selected={index === selectedShadeIndex}
@@ -811,9 +859,24 @@ function App() {
               </TextPreviewBox>
             </ColorPreview>
 
-            <Box sx={{ mt: "auto" }}>
+            <Box
+              sx={{
+                mt: "auto",
+                flex: 1,
+                minHeight: 0,
+                overflow: "auto",
+                display: "flex",
+                flexDirection: "column",
+                paddingTop: "clamp(8px, 1.5vh, 16px)",
+              }}
+            >
               <Box
-                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "clamp(4px, 1vw, 8px)",
+                  mb: "clamp(12px, 2vh, 16px)",
+                }}
               >
                 <TextField
                   fullWidth
@@ -822,17 +885,45 @@ function App() {
                   onChange={handleHexChange}
                   onBlur={handleHexBlur}
                   variant="outlined"
-                  sx={{ "& .MuiInputLabel-root": { whiteSpace: "nowrap" } }}
+                  sx={{
+                    "& .MuiInputLabel-root": {
+                      whiteSpace: "nowrap",
+                      fontSize: "clamp(0.75rem, 1.5vw, 0.875rem)",
+                    },
+                    "& .MuiInputBase-input": {
+                      fontSize: "clamp(0.75rem, 1.5vw, 0.875rem)",
+                    },
+                  }}
                 />
-                <IconButton onClick={handleCopyColor} color="primary">
-                  <ContentCopyIcon />
+                <IconButton
+                  onClick={handleCopyColor}
+                  color="primary"
+                  sx={{
+                    minWidth: "clamp(36px, 6vw, 48px)",
+                    height: "clamp(36px, 6vw, 48px)",
+                  }}
+                >
+                  <ContentCopyIcon
+                    sx={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
+                  />
                 </IconButton>
               </Box>
 
               <Box
-                sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}
+                sx={{
+                  display: "flex",
+                  gap: "clamp(8px, 1.5vw, 16px)",
+                  mb: "clamp(12px, 2vh, 16px)",
+                  alignItems: "center",
+                }}
               >
-                <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "clamp(8px, 1.5vw, 16px)",
+                    flex: 1,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Red"
@@ -840,6 +931,14 @@ function App() {
                     value={rgb.r}
                     onChange={handleRgbChange("r")}
                     inputProps={{ min: 0, max: 255 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -848,6 +947,14 @@ function App() {
                     value={rgb.g}
                     onChange={handleRgbChange("g")}
                     inputProps={{ min: 0, max: 255 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -856,6 +963,14 @@ function App() {
                     value={rgb.b}
                     onChange={handleRgbChange("b")}
                     inputProps={{ min: 0, max: 255 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                 </Box>
                 <IconButton
@@ -866,15 +981,32 @@ function App() {
                     setShowSnackbar(true);
                   }}
                   color="primary"
+                  sx={{
+                    minWidth: "clamp(36px, 6vw, 48px)",
+                    height: "clamp(36px, 6vw, 48px)",
+                  }}
                 >
-                  <ContentCopyIcon />
+                  <ContentCopyIcon
+                    sx={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
+                  />
                 </IconButton>
               </Box>
 
               <Box
-                sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}
+                sx={{
+                  display: "flex",
+                  gap: "clamp(8px, 1.5vw, 16px)",
+                  mb: "clamp(12px, 2vh, 16px)",
+                  alignItems: "center",
+                }}
               >
-                <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "clamp(8px, 1.5vw, 16px)",
+                    flex: 1,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Hue"
@@ -882,6 +1014,14 @@ function App() {
                     value={hsl.h}
                     onChange={handleHslChange("h")}
                     inputProps={{ min: 0, max: 360 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -890,6 +1030,14 @@ function App() {
                     value={hsl.s}
                     onChange={handleHslChange("s")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -898,6 +1046,14 @@ function App() {
                     value={hsl.l}
                     onChange={handleHslChange("l")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                 </Box>
                 <IconButton
@@ -908,15 +1064,32 @@ function App() {
                     setShowSnackbar(true);
                   }}
                   color="primary"
+                  sx={{
+                    minWidth: "clamp(36px, 6vw, 48px)",
+                    height: "clamp(36px, 6vw, 48px)",
+                  }}
                 >
-                  <ContentCopyIcon />
+                  <ContentCopyIcon
+                    sx={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
+                  />
                 </IconButton>
               </Box>
 
               <Box
-                sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}
+                sx={{
+                  display: "flex",
+                  gap: "clamp(8px, 1.5vw, 16px)",
+                  mb: "clamp(12px, 2vh, 16px)",
+                  alignItems: "center",
+                }}
               >
-                <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "clamp(8px, 1.5vw, 16px)",
+                    flex: 1,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Cyan"
@@ -924,6 +1097,14 @@ function App() {
                     value={cmyk.c}
                     onChange={handleCmykChange("c")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -932,6 +1113,14 @@ function App() {
                     value={cmyk.m}
                     onChange={handleCmykChange("m")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -940,6 +1129,14 @@ function App() {
                     value={cmyk.y}
                     onChange={handleCmykChange("y")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -948,6 +1145,14 @@ function App() {
                     value={cmyk.k}
                     onChange={handleCmykChange("k")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.65rem, 1.2vw, 0.75rem)",
+                      },
+                    }}
                   />
                 </Box>
                 <IconButton
@@ -958,15 +1163,32 @@ function App() {
                     setShowSnackbar(true);
                   }}
                   color="primary"
+                  sx={{
+                    minWidth: "clamp(36px, 6vw, 48px)",
+                    height: "clamp(36px, 6vw, 48px)",
+                  }}
                 >
-                  <ContentCopyIcon />
+                  <ContentCopyIcon
+                    sx={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
+                  />
                 </IconButton>
               </Box>
 
               <Box
-                sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}
+                sx={{
+                  display: "flex",
+                  gap: "clamp(8px, 1.5vw, 16px)",
+                  mb: "clamp(12px, 2vh, 16px)",
+                  alignItems: "center",
+                }}
               >
-                <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: "clamp(8px, 1.5vw, 16px)",
+                    flex: 1,
+                  }}
+                >
                   <TextField
                     fullWidth
                     label="Hue"
@@ -974,6 +1196,14 @@ function App() {
                     value={hsb.h}
                     onChange={handleHsbChange("h")}
                     inputProps={{ min: 0, max: 360 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -982,6 +1212,14 @@ function App() {
                     value={hsb.s}
                     onChange={handleHsbChange("s")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                   <TextField
                     fullWidth
@@ -990,6 +1228,14 @@ function App() {
                     value={hsb.b}
                     onChange={handleHsbChange("b")}
                     inputProps={{ min: 0, max: 100 }}
+                    sx={{
+                      "& .MuiInputLabel-root": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                      "& .MuiInputBase-input": {
+                        fontSize: "clamp(0.7rem, 1.3vw, 0.8rem)",
+                      },
+                    }}
                   />
                 </Box>
                 <IconButton
@@ -1000,8 +1246,14 @@ function App() {
                     setShowSnackbar(true);
                   }}
                   color="primary"
+                  sx={{
+                    minWidth: "clamp(36px, 6vw, 48px)",
+                    height: "clamp(36px, 6vw, 48px)",
+                  }}
                 >
-                  <ContentCopyIcon />
+                  <ContentCopyIcon
+                    sx={{ fontSize: "clamp(1rem, 2vw, 1.25rem)" }}
+                  />
                 </IconButton>
               </Box>
             </Box>
