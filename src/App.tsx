@@ -646,6 +646,8 @@ function App() {
 
   const handleFavoriteClick = (color: string) => {
     setColor(color);
+    setHexInput(color);
+    setIsShadeSelection(false);
   };
 
   const filteredFavorites = favorites.filter((fav) =>
